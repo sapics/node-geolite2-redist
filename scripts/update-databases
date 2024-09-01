@@ -7,7 +7,7 @@ then
   exit 1
 fi
 
-editions=(GeoLite2-ASN GeoLite2-Country GeoLite2-City)
+editions=(GeoLite2-Country GeoLite2-City)
 
 cd redist
 
@@ -16,19 +16,19 @@ did_update_anything=0
 for edition in ${editions[*]}
 do
   echo -e "\nDownloading checksum for latest version of ${edition}..."
-  curl -s -L -u "${MAXMIND_ACCOUNT_ID}:${MAXMIND_LICENSE_KEY}" "https://download.maxmind.com/geoip/databases/${edition}/download?suffix=tar.gz.sha256" -o ${edition}.tar.gz.remote.sha256
+  curl -s -L -u "${MAXMIND_ACCOUNT_ID}:${MAXMIND_LICENSE_KEY}" "https://download.maxmind.com/geoip/databases/${edition}/download?suffix=zip.sha256" -o ${edition}.zip.remote.sha256
 
-  if [ -f "$edition.tar.gz.sha256" ];
+  if [ -f "$edition.zip.sha256" ];
   then
 	 echo "Checking against current version..."
-	 remote=`cat ${edition}.tar.gz.remote.sha256 | awk '{print $1;}'`
-	 local=`cat ${edition}.tar.gz.sha256`
+	 remote=`cat ${edition}.zip.remote.sha256 | awk '{print $1;}'`
+	 local=`cat ${edition}.zip.sha256`
 	 echo "Remote: ${remote}"
 	 echo "Local: ${local}"
 	 if [ "$remote" == "$local" ];
 	 then
 		echo -e "\033[32;1m${edition} is already up to date\033[0m"
-		rm ${edition}.tar.gz.remote.sha256
+		rm ${edition}.zip.remote.sha256
 		continue
 	 else
 		echo "Update available!"
@@ -47,11 +47,11 @@ do
 	cd redist
 
   echo "Downloading ${edition}..."
-  curl -s -L -u "${MAXMIND_ACCOUNT_ID}:${MAXMIND_LICENSE_KEY}" "https://download.maxmind.com/geoip/databases/${edition}/download?suffix=tar.gz" -o ${edition}.tar.gz
+  curl -s -L -u "${MAXMIND_ACCOUNT_ID}:${MAXMIND_LICENSE_KEY}" "https://download.maxmind.com/geoip/databases/${edition}/download?suffix=zip" -o ${edition}.zip
 
   echo "Verifying checksum..."
-  remote=`cat ${edition}.tar.gz.remote.sha256 | awk '{print $1;}'`
-  local=`shasum -a 256 ${edition}.tar.gz | awk '{print $1;}'`
+  remote=`cat ${edition}.zip.remote.sha256 | awk '{print $1;}'`
+  local=`shasum -a 256 ${edition}.zip | awk '{print $1;}'`
 	echo "Remote: ${remote}"
 	echo "Local: ${local}"
   if [ "$remote" != "$local" ];
@@ -59,13 +59,13 @@ do
 	 echo -e "\033[31;1mChecksums didn't match: failed download for ${edition}\033[0m"
 	 exit 1
   else
-	 rm ${edition}.tar.gz.remote.sha256
-	 echo ${local} > ${edition}.tar.gz.sha256
+	 rm ${edition}.zip.remote.sha256
+	 echo ${local} > ${edition}.zip.sha256
 	 did_update_anything=1
   fi
 
   echo "Extracting database..."
-  tar -zxf ${edition}.tar.gz --wildcards '*.mmdb' --strip-components 1
+  tar -zxf ${edition}.zip --wildcards '*.mmdb' --strip-components 1
 
   echo "Calculating database checksum for redistribution..."
   calculated=`shasum -a 384 ${edition}.mmdb | awk '{print $1;}'`
