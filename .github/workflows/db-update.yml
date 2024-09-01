@@ -2,7 +2,7 @@ name: Databases Updater
 
 on:
   schedule:
-    - cron: '4 23 * * Tue,Fri'
+    - cron: '4 23 * * *'
   workflow_dispatch:
     inputs:
       dry_run:
