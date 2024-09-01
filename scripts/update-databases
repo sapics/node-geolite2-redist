@@ -7,7 +7,7 @@ then
   exit 1
 fi
 
-editions=(GeoLite2-Country GeoLite2-City)
+editions=(GeoLite2-Country-CSV GeoLite2-City-CSV)
 
 cd redist
 
@@ -64,13 +64,13 @@ do
 	 did_update_anything=1
   fi
 
-  echo "Extracting database..."
-  tar -zxf ${edition}.zip --wildcards '*.mmdb' --strip-components 1
+#  echo "Extracting database..."
+#  tar -zxf ${edition}.zip --wildcards '*.mmdb' --strip-components 1
 
-  echo "Calculating database checksum for redistribution..."
-  calculated=`shasum -a 384 ${edition}.mmdb | awk '{print $1;}'`
-	echo "New checksum: ${calculated}"
-  echo "${calculated}" > ${edition}.mmdb.sha384
+#  echo "Calculating database checksum for redistribution..."
+#  calculated=`shasum -a 384 ${edition}.mmdb | awk '{print $1;}'`
+#	echo "New checksum: ${calculated}"
+#  echo "${calculated}" > ${edition}.mmdb.sha384
 
 	echo "Committing update..."
 	cd ..
