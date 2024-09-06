@@ -7,7 +7,7 @@ then
   exit 1
 fi
 
-editions=(GeoLite2-Country-CSV GeoLite2-City-CSV)
+editions=(GeoLite2-ASN GeoLite2-Country-CSV GeoLite2-City-CSV)
 
 cd redist
 
